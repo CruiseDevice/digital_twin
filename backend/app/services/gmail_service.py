@@ -100,9 +100,20 @@ def get_message(service, message_id):
                 'mimeType': mime_type
             })
 
-        return {
-            'id': message_id,
-            'headers': headers,
-            'body': body,
-            'attachments': attachments
-        }
+    return {
+        'id': message_id,
+        'headers': headers,
+        'body': body,
+        'attachments': attachments
+    }
+    
+
+def get_attachment(service, message_id, attachment_id):
+    """Get an attachment by its ID"""
+    attachment = service.users().messages().attachments().get(
+        userId='me', messageId=message_id, id=attachment_id
+    ).execute()
+
+    data = attachment['data']
+    file_data = base64.urlsafe_b64decode(data)
+    return file_data
