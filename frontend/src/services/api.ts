@@ -26,7 +26,7 @@ class ApiService {
     return `${this.baseUrl}/logout`;
   }
 
-  async getEmail(query='has:attachment filename:pdf', maxResults=10): Promise<EmailListResponse> {
+  async getEmails(query='has:attachment filename:pdf', maxResults=10): Promise<EmailListResponse> {
     const response = await fetch(
       `${this.baseUrl}/api/emails?query=${encodeURIComponent(query)}&maxResults=${maxResults}`, {
         credentials: 'include',
@@ -41,7 +41,7 @@ class ApiService {
 
   async checkAuthStatus(): Promise<boolean> {
     try {
-      await this.getEmail('', 1);
+      await this.getEmails('', 1);
       return true;
     } catch (error) {
       return false;

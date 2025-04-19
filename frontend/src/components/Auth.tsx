@@ -1,4 +1,5 @@
 import apiService from '@/services/api';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface AuthProps {
@@ -6,6 +7,8 @@ interface AuthProps {
 }
 
 export default function Auth({onAuthChange}: AuthProps) {
+  const router = useRouter();
+  
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
@@ -26,14 +29,22 @@ export default function Auth({onAuthChange}: AuthProps) {
   }, [onAuthChange]);
 
   const handleLogin = () => {
-    window.location.href = apiService.getLoginUrl();
+    try{
+      const loginUrl = apiService.getLoginUrl();
+      router.push(loginUrl);
+    } catch (error) {
+      // TODO: Handle error in the UI; maybe using a toast notification
+      console.error('Login failed:', error);
+    }
   }
 
   const handleLogout = () => {
     try{
-      window.location.href = apiService.getLogoutUrl();
+      const logoutUrl = apiService.getLogoutUrl();
+      router.push(logoutUrl);
     } catch(error) {
       console.error('Logout failed:', error);
+      // TODO: Add error handling in the UI; maybe using a toast notification
     }
   }
   if (isLoading) {

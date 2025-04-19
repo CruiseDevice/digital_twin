@@ -1,3 +1,4 @@
+import os
 from fastapi import APIRouter, Request, status, HTTPException
 from fastapi.responses import RedirectResponse
 from app.services.gmail_service import create_flow, credentials_to_dict
@@ -41,11 +42,13 @@ async def oauth2callback(request: Request):
     request.session["credentials"] = creds_dict
     
     # redirect to frontend or API homepage
-    return RedirectResponse(url="/")
+    frontend_url = os.getenv("FRONTEND_URL")
+    return RedirectResponse(url=frontend_url)
 
 
 @router.get("/logout")
 async def logout(request: Request):
     """Clear the user's session"""
     request.session.clear()
-    return {"message": "Logged out successfully"}
+    frontend_url = os.getenv("FRONTEND_URL")
+    return RedirectResponse(url=frontend_url)

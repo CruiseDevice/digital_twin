@@ -1,6 +1,7 @@
 "use client";
 
 import Auth from "@/components/Auth";
+import EmailDetail from "@/components/EmailDetail";
 import EmailList from "@/components/EmailList";
 import Image from "next/image";
 import { useState } from "react";
@@ -20,6 +21,10 @@ export default function Home() {
     }
   }
 
+  const handleBackToList = () => {
+    
+  }
+
   return (
     <main className="min-h-screen bg-gray-50">
       <header className="bg-white border-b shadow-sm">
@@ -32,10 +37,14 @@ export default function Home() {
       </header>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-7">
         <div className="bg-white shadow rounded-lg">
-          <EmailList 
-            isAuthenticated={isAuthenticated}
-            onSelectEmail={handleSelectEmail}
-          />
+          {selectedEmailId ? (
+            <EmailDetail emailId={selectedEmailId} onBack={handleBackToList}/>
+          ) : (
+            <EmailList 
+              isAuthenticated={isAuthenticated}
+              onSelectEmail={handleSelectEmail}
+            />
+          )}
         </div>
       </div>
     </main>
