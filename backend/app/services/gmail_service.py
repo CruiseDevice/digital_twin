@@ -73,7 +73,8 @@ def get_message(service, message_id):
     
     # Process parts recursively to extract body and attachments
     parts = [message['payload']]
-    body = ""
+    html_body = None
+    plain_body = None
     attachments = []
 
     while parts:
@@ -86,11 +87,14 @@ def get_message(service, message_id):
         # process this part based on its MIME type
         mime_type = part.get('mimeType', '')
 
-        if mime_type.startswith('text/'):
-            if 'data' in part.get('body', {}):
-                body_data = part['body']['data']
-                decoded_bytes = base64.urlsafe_b64decode(body_data)
-                body += decoded_bytes.decode('utf-8')
+        if mime_type == 'text/html' and 'data' in part.get('body', {}):
+            body_data = part['body']['data']
+            decoded_bytes = base64.urlsafe_b64decode(body_data)
+            html_body = decoded_bytes.decode('utf-8')
+        elif mime_type == 'text/plain' and 'data' in part.get('body', {}) and not html_body:
+            body_data = part['body']['data']
+            decoded_bytes = base64.urlsafe_b64decode(body_data)
+            plain_body = decoded_bytes.decode('utf-8')
 
         # handle attachments
         elif 'attachmentId' in part.get('body', {}):
@@ -99,6 +103,9 @@ def get_message(service, message_id):
                 'filename': part.get('filename', ''),
                 'mimeType': mime_type
             })
+
+    # Use HTML body if available, otherwise use plain text
+    body = html_body if html_body else plain_body
 
     return {
         'id': message_id,
