@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from dotenv import load_dotenv
-from .api import auth, emails
+from .api import auth, emails, ai
 
 
 load_dotenv()
@@ -26,6 +26,7 @@ app.add_middleware(
 # include routers
 app.include_router(auth.router, tags=["Authentication"])
 app.include_router(emails.router, prefix="/api", tags=["Emails"])
+app.include_router(ai.router, prefix="/api/ai", tags=["AI"])
 
 
 @app.get("/")

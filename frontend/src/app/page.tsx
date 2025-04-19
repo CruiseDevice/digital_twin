@@ -23,7 +23,7 @@ export default function Home() {
   }
 
   const handleBackToList = () => {
-
+    setSelectedEmailId(null);
   }
 
   return (
@@ -31,7 +31,7 @@ export default function Home() {
       <header className="bg-white border-b shadow-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <h1 className="text-xl font-bold">Email Digital Twin</h1>
+            <h1 className="text-xl font-bold text-black">Email Digital Twin</h1>
             <Auth onAuthChange={handleAuthChange}/>
           </div>
         </div>

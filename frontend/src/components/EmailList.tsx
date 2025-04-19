@@ -34,7 +34,7 @@ export default function EmailList({isAuthenticated, onSelectEmail}: EmailListPro
 
   if (!isAuthenticated) {
     return (
-      <div className="p-4 text-center">
+      <div className="p-4 text-gray-900 text-center">
         Please log in to view your emails
       </div>
     )
@@ -43,11 +43,11 @@ export default function EmailList({isAuthenticated, onSelectEmail}: EmailListPro
   return (
     <div className="p-4">
       {isLoading ? (
-        <div className="text-center py-8">Loading emails...</div>
+        <div className="text-gray-900 text-center py-8">Loading emails...</div>
       ) : error ? (
         <div className="text-red-500 text-center py-8">{error}</div>
       ) : emails.length === 0 ? (
-        <div className="text-center py-8">No emails found matching your search.</div>
+        <div className="text-gray-900 text-center py-8">No emails found matching your search.</div>
       ) : (
         <div className="border rounded divide-y">
           {emails.map((email) => (
@@ -57,8 +57,8 @@ export default function EmailList({isAuthenticated, onSelectEmail}: EmailListPro
               className="p-4 hover:bg-gray-100 cursor-pointer transition duration-150"
             >
               <div className="flex justify-between items-start">
-                <div className="font-semibold text-lg">{email.subject}</div>
-                <div className="text-sm text-gray-500">{email.date}</div>
+                <div className="font-semibold text-lg text-gray-900">{email.subject}</div>
+                <div className="text-sm text-gray-600">{email.date}</div>
               </div>
               <div className="text-sm text-gray-600 mt-1">From: {email.from}</div>
             </div>
