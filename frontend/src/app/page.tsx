@@ -1,29 +1,28 @@
 "use client";
 
 import Auth from "@/components/Auth";
-import EmailDetail from "@/components/EmailDetail";
-import EmailList from "@/components/EmailList";
-import Image from "next/image";
+import ThreadDetail from "@/components/ThreadDetail";
+import ThreadList from "@/components/ThreadList";
 import { useState } from "react";
 
 export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [selectedEmailId, setSelectedEmailId] = useState<string | null>(null);
+  const [selectedThreadID, setSelectedThreadID] = useState<string | null>(null);
   
-  const handleSelectEmail = (emailId: string) => {
-    setSelectedEmailId(emailId);
+  const handleSelectThread = (threadId: string) => {
+    setSelectedThreadID(threadId);
   };
 
   const handleAuthChange = (authStatus: boolean) => {
     setIsAuthenticated(authStatus);
     // clear selected email if user logs out
     if (!authStatus) {
-      setSelectedEmailId(null);
+      setSelectedThreadID(null);
     }
   }
 
   const handleBackToList = () => {
-    setSelectedEmailId(null);
+    setSelectedThreadID(null);
   }
 
   return (
@@ -38,12 +37,12 @@ export default function Home() {
       </header>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-7">
         <div className="bg-white shadow rounded-lg">
-          {selectedEmailId ? (
-            <EmailDetail emailId={selectedEmailId} onBack={handleBackToList}/>
+          {selectedThreadID ? (
+            <ThreadDetail threadId={selectedThreadID} onBack={handleBackToList}/>
           ) : (
-            <EmailList 
+            <ThreadList 
               isAuthenticated={isAuthenticated}
-              onSelectEmail={handleSelectEmail}
+              onSelectThread={handleSelectThread}
             />
           )}
         </div>

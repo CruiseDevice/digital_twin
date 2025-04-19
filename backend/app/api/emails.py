@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, HTTPException, Depends, status
-from app.services.gmail_service import build_service, list_messages, \
-    get_message, get_attachment
+from app.services.gmail_service import build_service, get_thread, list_messages, \
+    get_message, get_attachment, list_threads
 import os
 
 router = APIRouter()
@@ -98,3 +98,61 @@ async def download_attachment(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
+
+@router.get("/threads")
+async def list_email_threads(
+    request: Request,
+    service=Depends(get_gmail_service),
+    query: str="has:attachment filename:pdf",
+    max_results: int=10
+):
+    """
+    List email threads matching the query.
+    """
+    try:
+        threads = list_threads(service, query, max_results)
+        
+        # get basic details for each thread
+        thread_previews = []
+        for thread in threads:
+            thread_detail = service.users().threads().get(
+                userId='me', id=thread['id'], format='metadata'
+            ).execute()
+
+            # use the most recent message in the thread for preview
+            if thread_detail.get('messages'):
+                latest_message = thread_detail['messages'][-1]
+
+                # extract subject and sender
+                headers = {}
+                for header in latest_message.get('payload', {}).get('headers', []):
+                    if header['name'].lower() in ['subject', 'from', 'date']:
+                        headers[header['name'].lower()] = header['value']
+                
+                thread_previews.append({
+                    'id': thread['id'],
+                    'subject': headers.get('subject', '(No subject)'),
+                    'from': headers.get('from', ''),
+                    'date': headers.get('date', ''),
+                    'snippet': thread.get('snippet', ''),
+                    'messageCount': len(thread_detail.get('messages', []))
+                })
+        return {"threads": thread_previews}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/threads/{thread_id}")
+async def get_email_thread(
+    request: Request,
+    thread_id: str,
+    service=Depends(get_gmail_service)
+):
+    """
+    Get a complete email thread by ID.
+    """
+    try:
+        thread_data = get_thread(service, thread_id)
+        return thread_data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

@@ -48,6 +48,27 @@ export interface AIResponse {
   response: string; 
 }
 
+export interface ThreadListResponse {
+  threads: ThreadPreview[];
+}
+
+export interface ThreadPreview {
+  id: string;
+  subject: string;
+  from: string;
+  date: string;
+  snippet: string;
+  messageCount: number;
+}
+
+export interface Thread {
+  id: string;
+  messages: EmailDetail[];
+  historyId: string;
+  snippet: string;
+}
+
+
 class ApiService {
   private baseUrl: string;
 
@@ -124,6 +145,30 @@ class ApiService {
     return response.json();
   }
 
+
+  async getThreads(query='has:attachment filename:pdf', maxResults=10): Promise<ThreadListResponse> {
+    const response = await fetch(
+      `${this.baseUrl}/api/threads?query=${encodeURIComponent(query)}&maxResults=${maxResults}`, {
+        credentials: 'include',
+      }
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to fetch threads: ${response.statusText}`);
+    }
+    return response.json();
+  }
+
+  async getThreadDetail(threadId: string): Promise<Thread> {
+    const response = await fetch(
+      `${this.baseUrl}/api/threads/${threadId}`, {
+        credentials: 'include',
+      }
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to fetch thread detail: ${response.statusText}`);
+    }
+    return response.json();
+  }
 
 
   async checkAuthStatus(): Promise<boolean> {

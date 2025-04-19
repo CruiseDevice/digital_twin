@@ -124,3 +124,87 @@ def get_attachment(service, message_id, attachment_id):
     data = attachment['data']
     file_data = base64.urlsafe_b64decode(data)
     return file_data
+
+
+def list_threads(service, query='', max_results=10):
+    """
+    List email threads matching the query.
+    """
+    results = service.users().threads().list(
+        userId='me', q=query, maxResults=max_results
+    ).execute()
+    return results.get('threads', [])
+
+
+def get_thread(service, thread_id):
+    """
+    Get all messages in a thread by thread_id
+    """
+    try:
+        thread = service.users().threads().get(
+            userId='me', id=thread_id
+        ).execute()
+        
+        messages = []
+        for message in thread['messages']:
+            # extract headers
+            headers = {}
+            for header in message['payload']['headers']:
+                headers[header['name']] = header['value']
+
+            # process parts recursively to extract body and attachments
+            parts = [message['payload']]
+            html_body = None
+            plain_body = None
+            attachments = []
+            
+            while parts:
+                part = parts.pop(0)
+                # if the part has subparts add them to our processing queue
+                if 'parts' in part:
+                    parts.extend(part['parts'])
+                    continue
+
+                # process this part based on its MIME type
+                mime_type = part.get('mimeType', '')
+
+                if mime_type == 'text/html' and 'data' in part.get('body', {}):
+                    body_data = part['body']['data']
+                    decoded_bytes = base64.urlsafe_b64decode(body_data)
+                    html_body = decoded_bytes.decode('utf-8')
+                elif mime_type == 'text/plain' and 'data' in part.get('body', {}) and not html_body:
+                    body_data = part['body']['data']
+                    decoded_bytes = base64.urlsafe_b64decode(body_data)
+                    plain_body = decoded_bytes.decode('utf-8')
+
+                # handle attachments
+                elif 'attachmentId' in part.get('body', {}):
+                    attachments.append({
+                        'id': part['body']['attachmentId'],
+                        'filename': part.get('filename', ''),
+                        'mimeType': mime_type,
+                        'messageId': message['id']  # store the message id for attachment retrieval
+                    })
+            
+            # use html body if available, otherwise use plain text
+            body = html_body if html_body else plain_body
+
+            messages.append({
+                'id': message['id'],
+                'threadId': thread_id,
+                'headers': headers,
+                'body': body,
+                'attachments': attachments,
+                'internalDate': message.get('internalDate')  # for sorting
+            })
+
+        # sort messages by internalDate
+        messages.sort(key=lambda x: int(x.get('internalDate', 0)))
+        return {
+            'id': thread_id,
+            'messages': messages,
+            'historyId': thread.get('historyId'),
+            'snippet': thread.get('snippet')
+        }
+    except Exception as e:
+        raise Exception(f"Error fetching thread {thread_id}: {e}")
