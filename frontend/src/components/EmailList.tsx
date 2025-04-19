@@ -52,6 +52,7 @@ export default function EmailList({isAuthenticated, onSelectEmail}: EmailListPro
         <div className="border rounded divide-y">
           {emails.map((email) => (
             <div
+              onClick={() => onSelectEmail(email.id)}
               key={email.id}
               className="p-4 hover:bg-gray-100 cursor-pointer transition duration-150"
             >
@@ -59,7 +60,7 @@ export default function EmailList({isAuthenticated, onSelectEmail}: EmailListPro
                 <div className="font-semibold text-lg">{email.subject}</div>
                 <div className="text-sm text-gray-500">{email.date}</div>
               </div>
-              <div className="text-sm text-gray-600 mt-1">{email.from}</div>
+              <div className="text-sm text-gray-600 mt-1">From: {email.from}</div>
             </div>
           ))}
         </div>

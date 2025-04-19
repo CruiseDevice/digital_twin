@@ -1,8 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Email Digital Twin Frontend
+
+This is a Next.js frontend for the Email Digital Twin application, which allows you to:
+
+- Authenticate with your Gmail account
+- View your emails with PDF attachments
+- Download and manage these attachments
+
+## Prerequisites
+
+- Node.js 18+ and npm/yarn/pnpm/bun
+- Backend API running (FastAPI Gmail integration)
 
 ## Getting Started
 
-First, run the development server:
+1. Clone this repository
+2. Install dependencies:
+
+```bash
+npm install
+# or
+yarn
+# or
+pnpm install
+# or
+bun install
+```
+
+3. Set up your environment variables by creating a `.env.local` file:
+
+```
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+4. Run the development server:
 
 ```bash
 npm run dev
@@ -14,23 +44,30 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## How It Works
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Authentication**: The app uses OAuth 2.0 to authenticate with Gmail
+2. **Email Listing**: View emails with PDF attachments by default
+3. **Search**: Use Gmail's search syntax to find specific emails 
+4. **View Details**: Click on an email to view its details and attachments
+5. **Download**: Download attachments directly to your computer
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+- `/src/components` - React components
+- `/src/services` - API services for backend communication
+- `/src/utils` - Utility functions
+- `/src/app` - Next.js app router
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Backend API
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This frontend works with the Email Digital Twin FastAPI backend that:
 
-## Deploy on Vercel
+1. Handles OAuth authentication with Gmail
+2. Retrieves emails with attachments
+3. Downloads and processes attachments
+4. Provides a RESTful API for the frontend to consume
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Make sure the backend is running on `http://localhost:8000` or update the `.env.local` file accordingly.

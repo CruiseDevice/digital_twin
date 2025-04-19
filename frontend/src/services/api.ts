@@ -10,6 +10,21 @@ export interface EmailPreview {
   date: string;
 }
 
+export interface EmailDetail {
+  emailId: string;
+  headers: {
+    [key: string]: string;
+  };
+  body: string;
+  attachments: Attachment[];
+}
+
+export interface Attachment {
+  id: string;
+  filename: string;
+  mimeType: string;
+}
+
 
 class ApiService {
   private baseUrl: string;
@@ -36,6 +51,18 @@ class ApiService {
     if (!response.ok) {
       throw new Error(`Failed to fetch emails: ${response.statusText}`);
     }
+    return response.json();
+  }
+
+  async getEmailDetail(emailId: string): Promise<EmailDetail> {
+    const response = await fetch(`${this.baseUrl}/api/emails/${emailId}`, {
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch email detail: ${response.statusText}`);
+    }
+
     return response.json();
   }
 

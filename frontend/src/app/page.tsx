@@ -9,6 +9,7 @@ import { useState } from "react";
 export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [selectedEmailId, setSelectedEmailId] = useState<string | null>(null);
+  
   const handleSelectEmail = (emailId: string) => {
     setSelectedEmailId(emailId);
   };
@@ -22,7 +23,7 @@ export default function Home() {
   }
 
   const handleBackToList = () => {
-    
+
   }
 
   return (
